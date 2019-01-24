@@ -1,0 +1,7 @@
+.DS_Store
+.idea
+k8s-environment-override.ini
+*.pyc
+*.iml
+.ssh
+_output
