@@ -1,9 +1,37 @@
 # MapR CSI Storage Plugin
 
+<img src="https://mapr.com/solutions/data-fabric/kubernetes/assets/kubernetes-diagram.png" width="800" height="400" />
+
 The MapR CSI Storage plugin provides the persistent storage for Application containers. 
 For more information, Refer to [MapR documentation](https://mapr.com/docs/home/CSIdriver/csi_plan_and_install.html)
 
 Note: Kubernetes or CSI alpha features are not supported on MapR CSI Storage plugin v1.0.0.
+
+## MapR CSI Storage Plugin Support Matrix
+
+<table>
+  <thead>
+    <tr>
+      <th>MapR CSI Plugin version</th>
+      <th>Supported Kubernetes Version</th>
+      <th>CSI Spec version</th>
+      <th>Posix Client (Core) Version</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>v1.0.0</td>
+      <td>>=1.13.0</td>
+      <td><a href="https://github.com/container-storage-interface/spec/blob/v1.0.0/spec.md">v1.0.0</a></td>
+      <td>6.1.0</td>
+    </tr>
+  </tbody>
+</table>
+
+The released MapR CSI Storage plugin docker images will be published to:  
+[maprtech/csi-kdfplugin](https://hub.docker.com/r/maprtech/csi-kdfplugin)  
+[maprtech/csi-kdfprovisioner](https://hub.docker.com/r/maprtech/csi-kdfprovisioner)  
+[maprtech/csi-kdfdriver](https://hub.docker.com/r/maprtech/csi-kdfdriver)  
 
 ## Pre-requisites
 
@@ -25,6 +53,14 @@ allow sharing of volumes mounted by one container with other containers in the s
 to other pods on the same node.  
 See [Mount Propogation](https://kubernetes.io/docs/concepts/storage/volumes/#mount-propagation)
 for more info.
+
+*Note*: To test if Mount Propagation is enabled, Run the following command and it should run fine without error.
+
+```bash
+$ docker run -it -v /mnt:/mnt:shared busybox sh -c ls /
+```
+
+Note: For more detail instructions, Please refer to [Public CSI Documentation](https://kubernetes-csi.github.io/docs/Setup.html)  
 
 ## Installation
 
@@ -65,13 +101,13 @@ kubernetes environment.
 
 Run the following examples from the `examples` directory for static provisioning.
 
-```
+```bash
 $ cd examples
 ```
 
 1) Create Test namespace to run example yamls
 
-```
+```bash
 $ kubectl apply -f testnamespace.yaml
 ```
 
@@ -79,44 +115,44 @@ $ kubectl apply -f testnamespace.yaml
 
    Note: This step is only required when using static provisioning with MapR Secure Cluster.
 
-```
+```bash
 $ kubectl create -f testsecureticketsecret.yaml
 ```
 
 3) Create PVC
 
-```
+```bash
 $ kubectl create -f teststaticpvc.yaml
 ```
 
 4) Create PV
 
-```
+```bash
 $ kubectl create -f teststaticpv.yaml
 ```
 
 5) Verify that PV and PVC are bound to each other at this point.
 
-```
+```bash
 $ kubectl get pvc -n test-csi
 $ kubectl get pv -n test-csi
 ```
 
 Note: If PV and PVC are not bounded or still in waiting status, Run the following command to debug:
 
-```
+```bash
 $ kubectl describe pvc <pvc-name> -n test-csi
 $ kubect describe pv <pv-name> -n test-csi 
 ```
 6) Create Pod using above PVC
 
-```
+```bash
 kubectl create -f teststaticpod.yaml
 ```
 
 7) Verify that the Pod created in step(5) has the requested volume mount for MapR cluster volume.
 
-```
+```bash
 kubectl exec -it <pod> -n test-csi -- ls -l <volume-mount-path>
 ```
 
@@ -124,13 +160,13 @@ kubectl exec -it <pod> -n test-csi -- ls -l <volume-mount-path>
 
 Run the following examples from the `examples` directory for dynamic provisioning.
 
-```
+```bash
 $ cd examples
 ```
 
 1) Create Test namespace to run example yamls
 
-```
+```bash
 $ kubectl apply -f testnamespace.yaml
 ```
 
@@ -138,25 +174,25 @@ $ kubectl apply -f testnamespace.yaml
    
    Note: This step is only required when using static provisioning with MapR Secure Cluster.
 
-```
+```bash
 $ kubectl create -f testsecureticketsecret.yaml
 ```
 
 3) Create Rest secret for dynamic volume provisioning
 
-```
+```bash
 $ kubectl create -f testsecurerestsecret.yaml
 ```
 
 4) Create Storage Class using MapR CSI storage plugin driver
 
-```
+```bash
 $ kubectl create -f teststorageclass.yaml
 ```
 
 5) Create PVC
 
-```
+```bash
 $ kubectl create -f testdynamicpvc.yaml
 ```
 
@@ -164,27 +200,27 @@ The above command will provide `volumehandle` which is the MapR Volume being pro
 
 6) Verify that PV is created and PV/PVC are bounded.
 
-```
+```bash
 $ kubectl get pvc -n test-csi
 $ kubectl get pv -n test-csi
 ```
 
 Note: If PV is not created, see the provisioner log from provisioner deployed worker node for more info:
 
-```
+```bash
 $ cat /var/log/csi-maprkdf/csi-provisioner-1.0.0.log
 ```
 
 7) Create Pod using above PVC
 
-```
-kubectl create -f testdynamicpod.yaml
+```bash
+$ kubectl create -f testdynamicpod.yaml
 ```
 
 8) Verify that the Pod created in step(5) has the requested volume mount for MapR cluster volume.
 
-```
-kubectl exec -it <pod> -n test-csi -- ls -l <volume-mount-path>
+```bash
+$ kubectl exec -it <pod> -n test-csi -- ls -l <volume-mount-path>
 ```
 
 ### Snapshotting
@@ -194,13 +230,13 @@ With MapR CSI Storage Plugin v1.0.0, Snapshot provisioning is supported for dyna
  
 Run the following examples from the `examples` directory for Snapshot.
 
-```
+```bash
 $ cd examples
 ```
 
 1) Create Test namespace to run example yamls
 
-```
+```bash
 $ kubectl apply -f testnamespace.yaml
 ```
 
@@ -208,56 +244,56 @@ $ kubectl apply -f testnamespace.yaml
       
    Note: This step is only required when using static provisioning with MapR Secure Cluster.
 
-```
+```bash
 $ kubectl create -f testsecureticketsecret.yaml
 ```
 
 3) Create Rest-secret for MapR provisioner
 
-```
+```bash
 $ kubectl create -f testprovisionerrestsecret.yaml
 ```
 
 4) If not created already, Create StorageClass using MapR CSI storage plugin driver
 
-```
+```bash
 $ kubectl create -f testdynamicSC.yaml
 ```
 
 5) If not created already, Create PersistentVolumeClaim (PVC)
 
-```
+```bash
 $ kubectl create -f testdynamicpvc.yaml
 ```
 
 6) Verify that PersistentVolume (PV) is created and PV/PVC are bounded.
 
-```
+```bash
 $ kubectl get pvc -n test-csi
 $ kubectl get pv -n test-csi
 ```
 
 Note: If PV is not created, see the provisioner log from provisioner deployed worker node for more info:
 
-```
+```bash
 $ cat /var/log/csi-maprkdf/csi-provisioner-1.0.0.log
 ```
 
 7) Create Volume SnapshotClass for snapshot
 
-```
+```bash
 $ kubectl create -f testvolumesnapshotclass.yaml
 ```
 
 8) Create Volume Snapshot
 
-```
+```bash
 $ kubectl create -f testvolumesnapshot.yaml
 ```
 
 9) Verify that the snapshot is provisioned on MapR cluster
 
-```
+```bash
 $ kubectl get crd
 $ kubectl describe volumesnapshotclasses.snapshot.storage.k8s.io -n test-csi
 $ kubectl describe volumesnapshots.snapshot.storage.k8s.io -n test-csi
@@ -272,7 +308,7 @@ The above command will provide `snapshothandle` which is the MapR snapshot being
 
 To remove MapR CSI storage plugin from Kubernetes cluster, Run the following:
 
-```
+```bash
 $ kubectl delete -f deploy/kubernetes/csi-maprkdf-v1.0.0.yaml
 ```
 
