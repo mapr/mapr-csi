@@ -1,0 +1,7 @@
+# Copyright (c) 2009 & onwards. MapR Tech, Inc., All rights reserved
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test-csi
+  labels:
+    name: test-csi

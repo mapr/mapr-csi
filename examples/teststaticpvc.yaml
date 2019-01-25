@@ -1,0 +1,12 @@
+# Copyright (c) 2009 & onwards. MapR Tech, Inc., All rights reserved
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: test-static-pvc
+  namespace: test-csi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5G
