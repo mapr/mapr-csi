@@ -1,0 +1,11 @@
+# Copyright (c) 2009 & onwards. MapR Tech, Inc., All rights reserved
+apiVersion: snapshot.storage.k8s.io/v1alpha1
+kind: VolumeSnapshot
+metadata:
+  name: test-snapshot
+  namespace: test-csi
+spec:
+  snapshotClassName: test-snapshotclass
+  source:
+    name: test-dynamic-pvc
+    kind: PersistentVolumeClaim
