@@ -38,15 +38,15 @@ The released MapR CSI Storage plugin docker images will be published to:
 Currently, MapR CSI Storage plugin (v1.0.0) only support Kubernetes as CO (Container Orchestration) system.  
 
 Before installing the MapR Container Storage Interface (CSI) Storage Plugin, Please note the following:  
-1. The installation procedure assumes that the Kubernetes cluster is already installed and functioning normally.  
-2. The Privileged Pods and Mount Propogation are enabled on the Kubernetes environment. See below procedure to enable them:  
+1. The installation procedure assumes that the Kubernetes cluster (See supported Kubernetes version) is already installed and functioning normally.  
+2. Configure `--maxvolumepernode` to Maximum volumes allowed on a node as per it's capacity in the `deploy/kubernetes/csi-maprkdf-v1.0.0.yaml` accordingly.  
+3. The Privileged Pods and Mount Propogation are enabled on the Kubernetes environment. See below procedure to enable them:  
 a) Enable privileged Pods  
 This can be achieved with starting kubelet and Apiserver with allow-privileged flag to true:  
     `./kube-apiserver ...  --allow-privileged=true ...`  
     `./kubelet ...  --allow-privileged=true ...`
 
 *Note*: This is default in some environments, such as GKE, Kubeadm etc.  
-
 b) Enable mount propogation  
 MapR CSI Storage plugin require the mount propogation enabled on the Kubernetes environment. This will
 allow sharing of volumes mounted by one container with other containers in the same pod, or even
@@ -64,32 +64,59 @@ Note: For more detail instructions, Please refer to [Public CSI Documentation](h
 
 ## Installation
 
-Follow the below procedure to install MapR CSI Storage plugin in Kubernetes environment:   
-1. clone the repository (https://github.com/mapr/mapr-csi.git)  
-2. kubectl create -f deploy/kubernetes/csi-maprkdf-v1.0.0.yaml  
+Follow the below procedure to install MapR CSI Storage plugin in Kubernetes environment:  
+ 
+*Note*: The following steps requires the `git` and `kubectl` to be installed on the computer.  
 
-*Note*: csi-maprkdf-v1.0.0.yaml provides the MapR released CSI storage plugin based off Centos OS image and CSI KDF driver.  
-If you would like to build your own container with other supported Posix Client OS, Please refer to 
-[BYOC for MapR CSI Storage Plugin](#optional-build-your-own-container-for-mapr-csi-storage-plugin)
+1. clone the mapr-csi repository
+```bash
+$ git clone https://github.com/mapr/mapr-csi.git
+```
+2. cd to mapr-csi directory
+```bash
+$ cd mapr-csi
+```
+3. Deploy Installation yaml file for MapR CSI storage 
+```bash
+$ kubectl create -f deploy/kubernetes/csi-maprkdf-v1.0.0.yaml
+```
+
+*Note*: `csi-maprkdf-v1.0.0.yaml` provides the MapR released CSI storage plugin based of MapR provided Centos OS image and CSI KDF driver.  
+If you would like to build your own container with other supported Posix Client OS and modify the image in `csi-maprkdf-v1.0.0.yaml`, Please refer to 
+[BYOC for MapR CSI Storage Plugin](#optional-build-your-own-container-for-mapr-csi-storage-plugin) for more info.
 
 ## (Optional) Build your own container for MapR CSI Storage plugin
 
-This step and optional and only require if user would like to build a custom plugin with the given template.  
-The sample template is provided as a reference to build a custom plugin image:  
+This step is optional and is provided as a reference to build a custom plugin image:  
+
+*Note*: This step requires `docker` to be installed on the computer.
+
 a) cd build/<centos/ubuntu>  
-b) (Optional) Modify the `maprtech/csi-kdfdriver` tag to an updated tag in `Dockerfile`  
-c) (Optional) Modify the docker image tag for custom docker image name in `docker-custom-build.sh`  
-d) Run `./docker-custom-build.sh` to start building the docker image  
+b) (Optional) Modify the `maprtech/csi-kdfdriver` tag to an released tag in `Dockerfile`  
+c) (Optional) Modify the custom image tag in `docker-custom-build.sh`  
+d) Run `./docker-custom-build.sh` to start building the custom docker image  
 
 ## Installation verification
 
 MapR CSI storage plugin is deployed in `mapr-csi` namespace, by default.  
 
 To verify the installation, following the below procedure:  
-1. Verify all the driver components are deployed correctly.  
-2. Verify from the kubelet logs on kubernetes worker nodes if MapR CSI Storage plugin driver `com.mapr.csi-kdf` is
-registered with kubelet successfullly.  
-3. Run the Sample examples from [Sample]([#how-to-use) and verify the MapR CSI storage plugin is working as expected.  
+1. Verify all the driver components are deployed correctly and is in RUNNING state.  
+```bash
+$ kubectl get pods -n mapr-csi
+```
+2. Verify from the kubernetes worker nodes if log files are generated correctly and plugin/provisioner is initialized and registered.
+
+a) The following should be generated on each Kubernetes worker nodes where the plugin daemonset pod is scheduled to run. 
+```bash
+$ cat /var/log/csi-maprkdf/csi-plugin-1.0.0.log
+```
+
+b) The following should be generated where the provisioner stateful pod is running.
+```
+$ cat /var/log/csi-maprkdf/csi-provisioner-1.0.0.log
+ ```
+3. Run the Sample examples from [Sample]([#how-to-use) and verify the MapR CSI storage plugin and provisioner is working as expected.  
 
 
 ## How to use
@@ -181,13 +208,13 @@ $ kubectl create -f testsecureticketsecret.yaml
 3) Create Rest secret for dynamic volume provisioning
 
 ```bash
-$ kubectl create -f testsecurerestsecret.yaml
+$ kubectl create -f testprovisionerrestsecret.yaml
 ```
 
 4) Create Storage Class using MapR CSI storage plugin driver
 
 ```bash
-$ kubectl create -f teststorageclass.yaml
+$ kubectl create -f testsecurestorageclass.yaml
 ```
 
 5) Create PVC
