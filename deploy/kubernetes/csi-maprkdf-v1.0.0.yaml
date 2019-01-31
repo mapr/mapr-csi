@@ -209,11 +209,12 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: docker.artifactory/maprtech/csi-kdfplugin:1.0.0_005_centos7
+          image: docker.artifactory/maprtech/csi-kdfplugin:1.0.0_009_centos7
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
             - "--endpoint=$(CSI_ENDPOINT)"
+            - "--maxvolumepernode=20"
             - "-v=5"
           env:
             - name: NODE_ID
