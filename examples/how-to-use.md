@@ -3,7 +3,13 @@
 MapR CSI Storage plugin support Static and Dynamic volume provisioning for Containers. See the following to use it in 
 kubernetes environment.
 
-Note: Sensitive data contained in a Secret (*secret.yaml) must be represented in base64 encoded value.
+Note: Sensitive data contained in a Secret (*secret.yaml) must be represented in base64 encoded value.  
+For example, the following convert a string to a base64 value:  
+```bash
+$ echo -n 'mapr' | base64
+```  
+The output shows the base64 representation of the string mapr is `bWFwcg==`
+
       
 ### Static Volume Provisioning
 
