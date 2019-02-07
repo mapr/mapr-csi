@@ -13,6 +13,10 @@ The output shows the base64 representation of the string mapr is `bWFwcg==`
       
 ### Static Volume Provisioning
 
+The following video demonstrates the procedure for static provisioning in a single-node Kubernetes cluster and the MapR sandbox:
+
+[![asciicast](https://asciinema.org/a/rPc7SQswjJPB5DuPJnQ8K4Zi8.svg)](https://asciinema.org/a/rPc7SQswjJPB5DuPJnQ8K4Zi8)
+
 Run the following examples from the `examples` directory for static provisioning.
 
 ```bash
@@ -71,6 +75,10 @@ kubectl exec -it <pod> -n test-csi -- ls -l <volume-mount-path>
 ```
 
 ### Dynamic Volume Provisioning
+
+The following video demonstrates the procedure for dynamic provisioning in a single-node Kubernetes cluster and the MapR sandbox:
+
+[![asciicast](https://asciinema.org/a/225777.svg)](https://asciinema.org/a/225777)
 
 Run the following examples from the `examples` directory for dynamic provisioning.
 
