@@ -190,7 +190,7 @@ spec:
             - name: registration-dir
               mountPath: /registration/
         - name: liveness-probe
-          image: quay.io/k8scsi/livenessprobe:v1.0.1
+          image: quay.io/k8scsi/livenessprobe:v1.0.2
           imagePullPolicy: "Always"
           args:
             - "--v=5"
@@ -324,7 +324,7 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: liveness-probe
-          image: quay.io/k8scsi/livenessprobe:v1.0.1
+          image: quay.io/k8scsi/livenessprobe:v1.0.2
           imagePullPolicy: "Always"
           args:
             - "--v=5"
