@@ -209,7 +209,7 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: maprtech/csi-kdfplugin:1.0.2_001_centos7
+          image: maprtech/csi-kdfplugin:1.0.0_centos7
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
@@ -224,9 +224,9 @@ spec:
             - name: CSI_ENDPOINT
               value: unix://plugin/csi.sock
           ports:
-          - containerPort: 9808
-            name: healthz
-            protocol: TCP
+            - containerPort: 9808
+              name: healthz
+              protocol: TCP
           livenessProbe:
             failureThreshold: 20
             httpGet:
@@ -338,7 +338,7 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: mapr-kdfprovisioner
-          image: maprtech/csi-kdfprovisioner:1.0.2_001
+          image: maprtech/csi-kdfprovisioner:1.0.0
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
@@ -352,9 +352,9 @@ spec:
             - name: CSI_ENDPOINT
               value: unix://plugin/csi.sock
           ports:
-          - containerPort: 9809
-            name: healthz
-            protocol: TCP
+            - containerPort: 9809
+              name: healthz
+              protocol: TCP
           livenessProbe:
             failureThreshold: 20
             httpGet:
