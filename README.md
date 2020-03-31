@@ -78,11 +78,11 @@ $ cd mapr-csi
 ```
 3. Deploy Installation yaml file for MapR CSI storage 
 ```bash
-$ kubectl create -f deploy/kubernetes/csi-maprkdf-v1.0.0.yaml
+$ kubectl create -f deploy/kubernetes/csi-maprkdf-v1.0.2.yaml
 ```
 
-*Note*: `csi-maprkdf-v1.0.0.yaml` provides the MapR released CSI storage plugin based of MapR provided Centos OS image and CSI KDF driver.  
-If you would like to build your own container with other supported Posix Client OS and modify the image in `csi-maprkdf-v1.0.0.yaml`, Please refer to 
+*Note*: `csi-maprkdf-v1.0.2.yaml` provides the MapR released CSI storage plugin based of MapR provided Centos OS image and CSI KDF driver.  
+If you would like to build your own container with other supported Posix Client OS and modify the image in `csi-maprkdf-v1.0.2.yaml`, Please refer to 
 [BYOC for MapR CSI Storage Plugin](#optional-build-your-own-container-for-mapr-csi-storage-plugin) for more info.
 
 ## (Optional) Build your own container for MapR CSI Storage plugin
@@ -252,7 +252,7 @@ $ kubectl exec -it <pod> -n test-csi -- ls -l <volume-mount-path>
 
 ### Snapshotting
 
-With MapR CSI Storage Plugin v1.0.0, Snapshot provisioning is supported for dynamically provisioned volumes only. This provides
+With MapR CSI Storage Plugin v1.0.2, Snapshot provisioning is supported for dynamically provisioned volumes only. This provides
  support for creating/deleting MapR snapshot for newly provisioned volumes created with MapR CSI provisioner.
  
 Run the following examples from the `examples` directory for Snapshot.
@@ -336,7 +336,7 @@ The above command will provide `snapshothandle` which is the MapR snapshot being
 To remove MapR CSI storage plugin from Kubernetes cluster, Run the following:
 
 ```bash
-$ kubectl delete -f deploy/kubernetes/csi-maprkdf-v1.0.0.yaml
+$ kubectl delete -f deploy/kubernetes/csi-maprkdf-v1.0.2.yaml
 ```
 
 ## Note: For any suggestion, issues or improvements, Please file a github issue.
