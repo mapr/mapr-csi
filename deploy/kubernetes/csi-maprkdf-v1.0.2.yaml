@@ -150,7 +150,7 @@ roleRef:
 
 ---
 kind: DaemonSet
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 metadata:
   name: csi-nodeplugin-kdf
   namespace: mapr-csi
@@ -269,11 +269,14 @@ spec:
 
 ---
 kind: StatefulSet
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 metadata:
   name: csi-controller-kdf
   namespace: mapr-csi
 spec:
+  selector:
+    matchLabels:
+      app: csi-controller-kdf # has to match .spec.template.metadata.labels  
   serviceName: "kdf-provisioner-svc"
   replicas: 1
   template:
