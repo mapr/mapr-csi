@@ -159,7 +159,7 @@ roleRef:
 
 ---
 kind: DaemonSet
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 metadata:
   name: csi-nodeplugin-kdf
   namespace: mapr-csi
@@ -219,7 +219,7 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: maprtech/csi-kdfplugin:1.0.2_001_centos7
+          image: maprtech/csi-kdfplugin:1.0.2_002_centos7
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
@@ -279,11 +279,14 @@ spec:
 
 ---
 kind: StatefulSet
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 metadata:
   name: csi-controller-kdf
   namespace: mapr-csi
 spec:
+  selector:
+    matchLabels:
+      app: csi-controller-kdf # has to match .spec.template.metadata.labels  
   serviceName: "kdf-provisioner-svc"
   replicas: 1
   template:
