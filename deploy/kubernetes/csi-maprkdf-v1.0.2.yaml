@@ -225,6 +225,7 @@ spec:
             - "--nodeid=$(NODE_ID)"
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--maxvolumepernode=20"
+            - "--maxlogsizemb=10"
             - "-v=5"
           env:
             - name: NODE_ID
@@ -256,6 +257,8 @@ spec:
             - name: timezone
               mountPath: /etc/localtime
               readOnly: true
+            - name: core-path
+              mountPath: /opt/cores
       volumes:
         - name: plugin-dir
           hostPath:
@@ -276,6 +279,9 @@ spec:
         - name: timezone
           hostPath:
             path: /etc/localtime
+        - name: core-path
+          hostPath:
+            path: /opt/cores
 
 ---
 kind: StatefulSet
