@@ -70,7 +70,7 @@ Follow the below procedure to install MapR CSI Storage plugin in Kubernetes envi
 
 1. clone the mapr-csi repository
 ```bash
-$ git clone https://github.com/mapr/mapr-csi.git
+$ git clone https://github.com/mapr/mapr-csi.git -b v1.0.2
 ```
 2. cd to mapr-csi directory
 ```bash

@@ -200,12 +200,12 @@ spec:
             - name: registration-dir
               mountPath: /registration/
         - name: liveness-probe
-          image: quay.io/k8scsi/livenessprobe:v1.0.2
+          image: quay.io/k8scsi/livenessprobe:v2.0.0
           imagePullPolicy: "Always"
           args:
             - "--v=5"
             - "--csi-address=$(ADDRESS)"
-            - "--connection-timeout=60s"
+            - "--probe-timeout=60s"
             - "--health-port=9808"
           env:
             - name: ADDRESS
@@ -219,7 +219,7 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: maprtech/csi-kdfplugin:1.0.2_002_centos7
+          image: maprtech/csi-kdfplugin:1.0.2_003_centos7
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
@@ -344,12 +344,12 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: liveness-probe
-          image: quay.io/k8scsi/livenessprobe:v1.0.2
+          image: quay.io/k8scsi/livenessprobe:v2.0.0
           imagePullPolicy: "Always"
           args:
             - "--v=5"
             - "--csi-address=$(ADDRESS)"
-            - "--connection-timeout=60s"
+            - "--probe-timeout=60s"
             - "--health-port=9809"
           env:
             - name: ADDRESS
@@ -358,7 +358,7 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: mapr-kdfprovisioner
-          image: maprtech/csi-kdfprovisioner:1.0.2_001
+          image: maprtech/csi-kdfprovisioner:1.0.2_002
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
