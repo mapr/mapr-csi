@@ -18,7 +18,7 @@ Note: Kubernetes or CSI alpha features are not supported on MapR CSI Storage plu
   </thead>
   <tbody>
     <tr>
-      <td>v1.3.0</td>
+      <td>v1.1.0</td>
       <td>>=1.16.0</td>
       <td><a href="https://github.com/container-storage-interface/spec/blob/v1.3.0/spec.md">v1.3.0</a></td>
       <td>6.1.0</td>
