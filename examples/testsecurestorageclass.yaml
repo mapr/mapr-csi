@@ -5,6 +5,7 @@ metadata:
   name: test-dynamic-sc
   namespace: test-csi
 provisioner: com.mapr.csi-kdf
+allowVolumeExpansion: true
 parameters:
     csiProvisionerSecretName: "mapr-provisioner-secrets"
     csiProvisionerSecretNamespace: "test-csi"

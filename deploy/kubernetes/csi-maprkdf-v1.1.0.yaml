@@ -73,22 +73,33 @@ metadata:
   name: csi-attacher-cr
   namespace: mapr-csi
 rules:
+  - apiGroups: [""] # "" indicates the core API group
+    resources: ["pods"]
+    verbs: ["get", "watch", "list"]
   - apiGroups: [""]
     resources: ["secrets"]
     verbs: ["get", "list"]
   - apiGroups: [""]
     resources: ["events"]
-    verbs: ["get", "list", "watch", "update"]
+    verbs: ["get", "list", "watch", "update", "patch"]
   - apiGroups: [""]
     resources: ["persistentvolumes"]
-    verbs: ["get", "list", "watch", "update"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims/status"]
+    verbs: ["update", "patch"]
   - apiGroups: [""]
     resources: ["nodes"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["storage.k8s.io"]
     resources: ["volumeattachments"]
-    verbs: ["get", "list", "watch", "update"]
-
+    verbs: ["get", "list", "watch", "update", "patch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["volumeattachments/status"]
+    verbs: ["patch"]
 ---
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
@@ -128,7 +139,7 @@ rules:
     verbs: ["list", "watch", "update", "create", "patch"]
   - apiGroups: [""]
     resources: ["nodes"]
-    verbs: ["get", "list", "update"]
+    verbs: ["get", "list", "update", "watch"]
   - apiGroups: ["snapshot.storage.k8s.io"]
     resources: ["volumesnapshotclasses"]
     verbs: ["get", "list", "watch"]
@@ -136,11 +147,17 @@ rules:
     resources: ["volumesnapshotcontents"]
     verbs: ["create", "get", "list", "watch", "update", "delete"]
   - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshotcontents/status"]
+    verbs: ["update"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
     resources: ["volumesnapshots"]
     verbs: ["get", "list", "watch", "update"]
   - apiGroups: ["apiextensions.k8s.io"]
     resources: ["customresourcedefinitions"]
     verbs: ["create", "list", "watch", "delete"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["csinodes"]
+    verbs: ["get", "list", "watch"]
 
 ---
 kind: ClusterRoleBinding
@@ -177,7 +194,9 @@ spec:
       priorityClassName: mapr-csi-critical
       containers:
         - name: csi-node-driver-registrar
-          image: quay.io/k8scsi/csi-node-driver-registrar:v1.0.1
+          securityContext:
+            privileged: true
+          image: quay.io/k8scsi/csi-node-driver-registrar:v1.3.0
           imagePullPolicy: "Always"
           args:
             - "--v=5"
@@ -200,6 +219,8 @@ spec:
             - name: registration-dir
               mountPath: /registration/
         - name: liveness-probe
+          securityContext:
+            privileged: true
           image: quay.io/k8scsi/livenessprobe:v2.0.0
           imagePullPolicy: "Always"
           args:
@@ -219,14 +240,14 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: maprtech/csi-kdfplugin:1.0.2_003_centos7
+          image: maprtech/csi-kdfplugin:1.1.0_centos7
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--maxvolumepernode=20"
             - "--maxlogsizemb=10"
-            - "-v=5"
+            - "--v=5"
           env:
             - name: NODE_ID
               valueFrom:
@@ -304,7 +325,9 @@ spec:
       priorityClassName: mapr-csi-critical
       containers:
         - name: csi-attacher
-          image: quay.io/k8scsi/csi-attacher:v1.0.1
+          securityContext:
+            privileged: true
+          image: quay.io/k8scsi/csi-attacher:v2.2.0
           args:
             - "--v=5"
             - "--csi-address=$(ADDRESS)"
@@ -316,7 +339,7 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: csi-provisioner
-          image: quay.io/k8scsi/csi-provisioner:v1.0.1
+          image: quay.io/k8scsi/csi-provisioner:v1.6.0
           args:
             - "--provisioner=com.mapr.csi-kdf"
             - "--csi-address=$(ADDRESS)"
@@ -357,13 +380,28 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: csi-resizer
+          image: quay.io/k8scsi/csi-resizer:v0.5.0
+          args:
+            - "--v=5"
+            - "--csi-address=$(ADDRESS)"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          imagePullPolicy: "Always"
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: mapr-kdfprovisioner
-          image: maprtech/csi-kdfprovisioner:1.0.2_002
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+          image: maprtech/csi-kdfprovisioner:1.1.0
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
             - "--endpoint=$(CSI_ENDPOINT)"
-            - "-v=5"
+            - "--v=5"
           env:
             - name: NODE_ID
               valueFrom:
