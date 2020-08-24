@@ -126,6 +126,9 @@ rules:
     resources: ["secrets"]
     verbs: ["get", "list"]
   - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "watch", "list", "delete", "update", "create"]
+  - apiGroups: [""]
     resources: ["persistentvolumes"]
     verbs: ["get", "list", "watch", "create", "delete"]
   - apiGroups: [""]
@@ -152,6 +155,12 @@ rules:
   - apiGroups: ["snapshot.storage.k8s.io"]
     resources: ["volumesnapshots"]
     verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshots/status"]
+    verbs: ["update"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "watch", "list", "delete", "update", "create"]
   - apiGroups: ["apiextensions.k8s.io"]
     resources: ["customresourcedefinitions"]
     verbs: ["create", "list", "watch", "delete"]
@@ -240,7 +249,7 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: maprtech/csi-kdfplugin:1.1.0_centos7
+          image: maprtech/csi-kdfplugin:1.1.0_001_centos7
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
@@ -344,6 +353,7 @@ spec:
             - "--provisioner=com.mapr.csi-kdf"
             - "--csi-address=$(ADDRESS)"
             - "--volume-name-prefix=mapr-pv"
+            - "--timeout=300s" # large timeout to accommodate volume clone
             - "--v=5"
           env:
             - name: ADDRESS
@@ -353,12 +363,24 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: csi-snapshotter
-          image: quay.io/k8scsi/csi-snapshotter:v1.0.1
+          image: quay.io/k8scsi/csi-snapshotter:v2.1.1 # Works on k8s >= 1.17 when snapshotter moved from v1alpha1 to v1beta1, use v1.0.2 for k8s <= 1.16
           imagePullPolicy: "Always"
           args:
-            - "--snapshotter=com.mapr.csi-kdf"
             - "--csi-address=$(ADDRESS)"
             - "--snapshot-name-prefix=mapr-snapshot"
+            - "--timeout=300s" # large timeout to accommodate volume restore from snapshot
+            - "--v=5"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: csi-snapshot-controller # Not required on k8s <= 1.16
+          image: quay.io/k8scsi/snapshot-controller:v2.1.1
+          imagePullPolicy: "Always"
+          args:
+            - "--leader-election=false"
             - "--v=5"
           env:
             - name: ADDRESS
@@ -396,7 +418,7 @@ spec:
           securityContext:
             privileged: true
             allowPrivilegeEscalation: true
-          image: maprtech/csi-kdfprovisioner:1.1.0
+          image: maprtech/csi-kdfprovisioner:1.1.0_001
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
