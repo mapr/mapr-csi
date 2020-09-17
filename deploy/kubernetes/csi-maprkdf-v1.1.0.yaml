@@ -418,7 +418,7 @@ spec:
           securityContext:
             privileged: true
             allowPrivilegeEscalation: true
-          image: maprtech/csi-kdfprovisioner:1.1.0_003
+          image: maprtech/csi-kdfprovisioner:1.1.0_004
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
