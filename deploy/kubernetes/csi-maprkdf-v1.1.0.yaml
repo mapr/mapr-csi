@@ -249,7 +249,7 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: maprtech/csi-kdfplugin:1.1.0_002_centos7
+          image: maprtech/csi-kdfplugin:1.1.0_003_centos7
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
