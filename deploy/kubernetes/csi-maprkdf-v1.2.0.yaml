@@ -13,7 +13,7 @@ metadata:
   namespace: mapr-csi
 
 ---
-apiVersion: scheduling.k8s.io/v1beta1
+apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
   name: mapr-csi-critical
@@ -199,6 +199,7 @@ spec:
         app: csi-nodeplugin-kdf
     spec:
       serviceAccount: csi-nodeplugin-sa
+      dnsPolicy: ClusterFirstWithHostNet
       hostNetwork: true
       priorityClassName: mapr-csi-critical
       containers:
@@ -233,7 +234,7 @@ spec:
           image: quay.io/k8scsi/livenessprobe:v2.0.0
           imagePullPolicy: "Always"
           args:
-            - "--v=5"
+            - "--v=4"
             - "--csi-address=$(ADDRESS)"
             - "--probe-timeout=60s"
             - "--health-port=9808"
@@ -249,14 +250,14 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: maprtech/csi-kdfplugin:1.1.0_003_centos7
+          image: maprtech/csi-kdfplugin:1.2.0_000_centos8
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--maxvolumepernode=20"
             - "--maxlogsizemb=10"
-            - "--v=5"
+            - "--v=4"
           env:
             - name: NODE_ID
               valueFrom:
@@ -280,7 +281,7 @@ spec:
             - name: plugin-dir
               mountPath: /plugin
             - name: pods-mount-dir
-              mountPath: /var/lib/kubelet/pods
+              mountPath: /var/lib/kubelet
               mountPropagation: Bidirectional
             - name: k8s-log-dir
               mountPath: /var/log/csi-maprkdf
@@ -289,6 +290,8 @@ spec:
               readOnly: true
             - name: core-path
               mountPath: /opt/cores
+            - name: device-dir
+              mountPath: /dev
       volumes:
         - name: plugin-dir
           hostPath:
@@ -300,7 +303,7 @@ spec:
             type: Directory
         - name: pods-mount-dir
           hostPath:
-            path: /var/lib/kubelet/pods
+            path: /var/lib/kubelet
             type: Directory
         - name: k8s-log-dir
           hostPath:
@@ -312,6 +315,10 @@ spec:
         - name: core-path
           hostPath:
             path: /opt/cores
+        - name: device-dir
+          hostPath:
+            path: /dev
+            type: Directory
 
 ---
 kind: StatefulSet
@@ -363,7 +370,7 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: csi-snapshotter
-          image: quay.io/k8scsi/csi-snapshotter:v2.1.1 # Works on k8s >= 1.17 when snapshotter moved from v1alpha1 to v1beta1, use v1.0.2 for k8s <= 1.16
+          image: quay.io/k8scsi/csi-snapshotter:v3.0.2 # Works on k8s >= 1.17 when snapshotter moved from v1alpha1 to v1beta1, use v1.0.2 for k8s <= 1.16
           imagePullPolicy: "Always"
           args:
             - "--csi-address=$(ADDRESS)"
@@ -377,7 +384,7 @@ spec:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: csi-snapshot-controller # Not required on k8s <= 1.16
-          image: quay.io/k8scsi/snapshot-controller:v2.1.1
+          image: quay.io/k8scsi/snapshot-controller:v3.0.2
           imagePullPolicy: "Always"
           args:
             - "--leader-election=false"
@@ -392,7 +399,7 @@ spec:
           image: quay.io/k8scsi/livenessprobe:v2.0.0
           imagePullPolicy: "Always"
           args:
-            - "--v=5"
+            - "--v=4"
             - "--csi-address=$(ADDRESS)"
             - "--probe-timeout=60s"
             - "--health-port=9809"
@@ -418,12 +425,14 @@ spec:
           securityContext:
             privileged: true
             allowPrivilegeEscalation: true
-          image: maprtech/csi-kdfprovisioner:1.1.0_004
+          image: maprtech/csi-kdfprovisioner:1.2.0_000
           imagePullPolicy: "Always"
           args :
             - "--nodeid=$(NODE_ID)"
             - "--endpoint=$(CSI_ENDPOINT)"
-            - "--v=5"
+            - "--uniquename=k8s"
+            - "--statevolmountprefix=/apps/ksql"
+            - "--v=4"
           env:
             - name: NODE_ID
               valueFrom:

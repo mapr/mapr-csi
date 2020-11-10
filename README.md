@@ -3,7 +3,7 @@
 The MapR CSI Storage plugin provides the persistent storage for Application containers. 
 For more information, Refer to [MapR CSI Storage Plugin Overview](https://docs.datafabric.hpe.com/home/CSIdriver/csi_overview.html)
 
-Note: Kubernetes or CSI alpha features are not supported on MapR CSI Storage plugin v1.1.0.
+Note: Kubernetes or CSI alpha features are not supported on MapR CSI Storage plugin v1.2.0.
 
 ## MapR CSI Storage Plugin Support Matrix
 

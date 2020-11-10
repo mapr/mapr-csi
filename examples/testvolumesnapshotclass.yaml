@@ -1,12 +1,13 @@
 # Copyright (c) 2009 & onwards. MapR Tech, Inc., All rights reserved
-apiVersion: snapshot.storage.k8s.io/v1alpha1
+apiVersion: snapshot.storage.k8s.io/v1beta1
 kind: VolumeSnapshotClass
 metadata:
   name: test-snapshotclass
   namespace: test-csi
-snapshotter: com.mapr.csi-kdf
+driver: com.mapr.csi-kdf
+deletionPolicy: Delete
 parameters:
     restServers: CHANGETHIS
     cluster: CHANGETHIS
-    csiSnapshotterSecretName: "mapr-provisioner-secrets" # Can be separate secret for snapshot only
-    csiSnapshotterSecretNamespace: "test-csi"
+    csi.storage.k8s.io/snapshotter-secret-name: "mapr-provisioner-secrets" # Can be separate secret for snapshot only
+    csi.storage.k8s.io/snapshotter-secret-namespace: "test-csi"

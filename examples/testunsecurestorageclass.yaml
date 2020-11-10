@@ -5,6 +5,8 @@ metadata:
   name: test-dynamic-sc
   namespace: test-csi
 provisioner: com.mapr.csi-kdf
+allowVolumeExpansion: true
+reclaimPolicy: Delete
 parameters:
     csiProvisionerSecretName: "mapr-provisioner-secrets"
     csiProvisionerSecretNamespace: "test-csi"
@@ -14,4 +16,7 @@ parameters:
     securityType: CHANGETHIS # Default: unsecure
     namePrefix: CHANGETHIS
     mountPrefix: CHANGETHIS
+    logLevel: "error"
+    retainLogs: "false"
+    rootdirperms: "766"
     advisoryquota: CHANGETHIS
