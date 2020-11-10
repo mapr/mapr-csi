@@ -14,7 +14,7 @@ spec:
     nodePublishSecretRef:
       name: "mapr-ticket-secret"
       namespace: "test-csi"
-    driver: com.mapr.csi-kdf
+    driver: com.mapr.csi-nfskdf
     volumeHandle: test-id
     volumeAttributes:
       volumePath: CHANGETHIS # Default: "/"

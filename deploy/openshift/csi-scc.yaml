@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: SecurityContextConstraints
 metadata:
-  name: maprcsi-scc
+  name: maprnfscsi-scc
 defaultAddCapabilities: null
 runAsUser:
   type: RunAsAny
@@ -17,8 +17,8 @@ seccompProfiles:
 supplementalGroups:
   type: RunAsAny
 users:
-- system:serviceaccount:mapr-csi:csi-controller-sa
-- system:serviceaccount:mapr-csi:csi-nodeplugin-sa
+  - system:serviceaccount:mapr-nfscsi:csi-controller-nfs-sa
+  - system:serviceaccount:mapr-nfscsi:csi-nodeplugin-nfs-sa
 volumes:
 - '*'
 allowHostDirVolumePlugin: true

@@ -1,6 +1,6 @@
 ## How to use
 
-MapR CSI Storage plugin support Static and Dynamic volume provisioning for Containers. See the following to use it in 
+MapR CSI Storage plugin (LoopbackNFS based) supports Static and Dynamic volume provisioning for Containers. See the following to use it in 
 kubernetes environment.
 
 Note: Sensitive data contained in a Secret (*secret.yaml) must be represented in base64 encoded value.  
@@ -130,7 +130,7 @@ $ kubectl get pv -n test-csi
 Note: If PV is not created, see the provisioner log from provisioner deployed worker node for more info:
 
 ```bash
-$ cat /var/log/csi-maprkdf/csi-provisioner-1.1.0.log
+$ cat /var/log/csi-maprkdf/csi-nfsprovisioner-<version>.log
 ```
 
 7) Create Pod using above PVC
@@ -198,7 +198,7 @@ $ kubectl get pv -n test-csi
 Note: If PV is not created, see the provisioner log from provisioner deployed worker node for more info:
 
 ```bash
-$ cat /var/log/csi-maprkdf/csi-provisioner-1.1.0.log
+$ cat /var/log/csi-maprkdf/csi-nfsprovisioner-<version>.log
 ```
 
 7) Create Volume SnapshotClass for snapshot
@@ -228,8 +228,7 @@ The above command will provide `snapshothandle` which is the MapR snapshot being
 
 ### Volume Expansion
 
-With MapR CSI Storage Plugin v1.1.0, Volume expansion is supported for dynamically provisioned volumes only. This provides
- support for increasing the storage quota of newly provisioned volumes created with MapR CSI provisioner.
+Volume expansion is supported for dynamically provisioned volumes only. This provides support for increasing the storage quota of newly provisioned volumes created with MapR CSI provisioner.
 
 Steps are same as followed for Dynamic Volume Provisioning above with the addition of reapplying testdynamicpvc.yaml with increased value for 'storage' (ex: 'storage: 10G')
 

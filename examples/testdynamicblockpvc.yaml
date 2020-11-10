@@ -1,0 +1,14 @@
+# Copyright (c) 2009 & onwards. MapR Tech, Inc., All rights reserved
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: test-dynamic-block-pvc
+  namespace: test-csi
+spec:
+  storageClassName: test-dynamic-sc
+  volumeMode: Block
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5G
