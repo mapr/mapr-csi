@@ -145,9 +145,44 @@ $ kubectl create -f testdynamicpod.yaml
 $ kubectl exec -it <pod> -n test-csi -- ls -l <volume-mount-path>
 ```
 
+### Volume Clone
+
+Volume clone is supported for dynamically provisioned volumes. This provides support for creating a new 
+ MapR volume from a volume previously created with MapR CSI provisioner.
+
+Run the following example from the `examples` directory to clone the volume created in the Dynamic Volume Provisioning section.
+
+```bash
+$ cd examples
+```
+
+1) Create a PVC (clone of previously created PVC) & create a Pod to use this PVC
+
+```bash
+$ kubectl apply -f testvolumeclone.yaml
+```
+
+2) Verify that the PVC & Pod are created and the requested volume mount has data from the source volume
+
+```bash
+$ kubectl exec -it <pod> -n test-csi -- ls -l <volume-mount-path>
+```
+
+### Volume Expansion
+
+Volume expansion is supported for dynamically provisioned volumes only. This provides support for increasing the storage quota of newly provisioned volumes created with MapR CSI provisioner.
+
+Steps are same as followed for Dynamic Volume Provisioning above with the addition of reapplying testdynamicpvc.yaml with increased value for 'storage' (ex: 'storage: 10G')
+
+```bash
+$ kubectl apply -f testdynamicpvc.yaml
+```
+
+Please note that StorageClass used for Dynamic Volume Provisioning has 'allowVolumeExpansion' field set to 'true' for volume expansion to work on newly provisioned volume.
+
 ### Snapshotting
 
-With MapR CSI Storage Plugin v1.1.0, Snapshot provisioning is supported for dynamically provisioned volumes only. This provides
+Snapshot provisioning is supported for dynamically provisioned volumes only. This provides
  support for creating/deleting MapR snapshot for newly provisioned volumes created with MapR CSI provisioner.
  
 Run the following examples from the `examples` directory for Snapshot.
@@ -225,17 +260,27 @@ $ kubectl describe volumesnapshotcontents.snapshot.storage.k8s.io -n test-csi
 The above command will provide `snapshothandle` which is the MapR snapshot being provisioned for given PVC 
  referenced in the Volume Snapshot.
 
+### Snapshot Restore
 
-### Volume Expansion
+Snapshot restore is supported for dynamically provisioned volumes. This provides support for creating a new 
+ MapR volume from a snapshot of a volume previously created with MapR CSI provisioner.
 
-Volume expansion is supported for dynamically provisioned volumes only. This provides support for increasing the storage quota of newly provisioned volumes created with MapR CSI provisioner.
-
-Steps are same as followed for Dynamic Volume Provisioning above with the addition of reapplying testdynamicpvc.yaml with increased value for 'storage' (ex: 'storage: 10G')
+Run the following example from the `examples` directory to restore the volume created in the Snapshotting section.
 
 ```bash
-$ kubectl apply -f testdynamicpvc.yaml
+$ cd examples
 ```
 
-Please note that StorageClass used for Dynamic Volume Provisioning has 'allowVolumeExpansion' field set to 'true' for volume expansion to work on newly provisioned volume.
- 
+1) Create a PVC (from the snapshot) & create a Pod to use this PVC
+
+```bash
+$ kubectl apply -f testvolumesnapshotrestore.yaml
+```
+
+2) Verify that the PVC & Pod are created and the requested volume mount has data from the source snapshot
+
+```bash
+$ kubectl exec -it <pod> -n test-csi -- ls -l <volume-mount-path>
+```
+
 ### Note: Please refer to [Troubleshooting](troubleshooting.md) section for the installation troubleshooting tips.
