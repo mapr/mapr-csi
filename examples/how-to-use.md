@@ -130,7 +130,7 @@ $ kubectl get pv -n test-csi
 Note: If PV is not created, see the provisioner log from provisioner deployed worker node for more info:
 
 ```bash
-$ cat /var/log/csi-maprkdf/csi-provisioner-1.1.0.log
+$ cat /var/log/csi-maprkdf/csi-provisioner-<version>.log
 ```
 
 7) Create Pod using above PVC
@@ -147,7 +147,7 @@ $ kubectl exec -it <pod> -n test-csi -- ls -l <volume-mount-path>
 
 ### Snapshotting
 
-With MapR CSI Storage Plugin v1.1.0, Snapshot provisioning is supported for dynamically provisioned volumes only. This provides
+Snapshot provisioning is supported for dynamically provisioned volumes only. This provides
  support for creating/deleting MapR snapshot for newly provisioned volumes created with MapR CSI provisioner.
  
 Run the following examples from the `examples` directory for Snapshot.
@@ -198,7 +198,7 @@ $ kubectl get pv -n test-csi
 Note: If PV is not created, see the provisioner log from provisioner deployed worker node for more info:
 
 ```bash
-$ cat /var/log/csi-maprkdf/csi-provisioner-1.1.0.log
+$ cat /var/log/csi-maprkdf/csi-provisioner-<version>.log
 ```
 
 7) Create Volume SnapshotClass for snapshot
@@ -228,7 +228,7 @@ The above command will provide `snapshothandle` which is the MapR snapshot being
 
 ### Volume Expansion
 
-With MapR CSI Storage Plugin v1.1.0, Volume expansion is supported for dynamically provisioned volumes only. This provides
+Volume expansion is supported for dynamically provisioned volumes only. This provides
  support for increasing the storage quota of newly provisioned volumes created with MapR CSI provisioner.
 
 Steps are same as followed for Dynamic Volume Provisioning above with the addition of reapplying testdynamicpvc.yaml with increased value for 'storage' (ex: 'storage: 10G')
