@@ -1,0 +1,473 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: mapr-nfscsi
+  labels:
+    name: mapr-nfscsi
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: csi-nodeplugin-nfs-sa
+  namespace: mapr-nfscsi
+
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: mapr-nfscsi-critical
+value: 1000000000
+globalDefault: false
+description: "This priority class is used for NFS csi pods."
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-nodeplugin-nfs-cr
+  namespace: mapr-nfscsi
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "update"]
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-nodeplugin-nfs-crb
+  namespace: mapr-nfscsi
+subjects:
+  - kind: ServiceAccount
+    name: csi-nodeplugin-nfs-sa
+    namespace: mapr-nfscsi
+roleRef:
+  kind: ClusterRole
+  name: csi-nodeplugin-nfs-cr
+  apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: csi-controller-nfs-sa
+  namespace: mapr-nfscsi
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-attacher-nfs-cr
+  namespace: mapr-nfscsi
+rules:
+  - apiGroups: [""] # "" indicates the core API group
+    resources: ["pods"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims/status"]
+    verbs: ["update", "patch"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["volumeattachments"]
+    verbs: ["get", "list", "watch", "update", "patch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["volumeattachments/status"]
+    verbs: ["patch"]
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-attacher-nfs-crb
+  namespace: mapr-nfscsi
+subjects:
+  - kind: ServiceAccount
+    name: csi-controller-nfs-sa
+    namespace: mapr-nfscsi
+roleRef:
+  kind: ClusterRole
+  name: csi-attacher-nfs-cr
+  apiGroup: rbac.authorization.k8s.io
+
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-controller-nfs-cr
+  namespace: mapr-nfscsi
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list"]
+  - apiGroups: [""]
+    resources: ["endpoints"]
+    verbs: ["get", "watch", "list", "delete", "update", "create"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes"]
+    verbs: ["get", "list", "watch", "create", "delete"]
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["list", "watch", "update", "create", "patch"]
+  - apiGroups: [""]
+    resources: ["nodes"]
+    verbs: ["get", "list", "update", "watch"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshotclasses"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshotcontents"]
+    verbs: ["create", "get", "list", "watch", "update", "delete"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshotcontents/status"]
+    verbs: ["update"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshots"]
+    verbs: ["get", "list", "watch", "update"]
+  - apiGroups: ["snapshot.storage.k8s.io"]
+    resources: ["volumesnapshots/status"]
+    verbs: ["update"]
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get", "watch", "list", "delete", "update", "create"]
+  - apiGroups: ["apiextensions.k8s.io"]
+    resources: ["customresourcedefinitions"]
+    verbs: ["create", "list", "watch", "delete"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["csinodes"]
+    verbs: ["get", "list", "watch"]
+
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: csi-controller-nfs-crb
+  namespace: mapr-nfscsi
+subjects:
+  - kind: ServiceAccount
+    name: csi-controller-nfs-sa
+    namespace: mapr-nfscsi
+roleRef:
+  kind: ClusterRole
+  name: csi-controller-nfs-cr
+  apiGroup: rbac.authorization.k8s.io
+
+---
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  name: csi-nodeplugin-nfskdf
+  namespace: mapr-nfscsi
+spec:
+  selector:
+    matchLabels:
+      app: csi-nodeplugin-nfskdf
+  template:
+    metadata:
+      labels:
+        app: csi-nodeplugin-nfskdf
+    spec:
+      serviceAccount: csi-nodeplugin-nfs-sa
+      dnsPolicy: ClusterFirstWithHostNet
+      hostNetwork: true
+      priorityClassName: mapr-nfscsi-critical
+      containers:
+        - name: csi-node-driver-registrar
+          securityContext:
+            privileged: true
+          image: quay.io/k8scsi/csi-node-driver-registrar:v1.3.0
+          imagePullPolicy: "Always"
+          args:
+            - "--v=5"
+            - "--csi-address=$(ADDRESS)"
+            - "--kubelet-registration-path=/var/lib/kubelet/plugins/com.mapr.csi-nfskdf/nfscsi.sock"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "rm -rf /registration/com.mapr.csi-nfskdf /registration/com.mapr.csi-nfskdf-reg.sock"]
+          env:
+            - name: ADDRESS
+              value: /plugin/nfscsi.sock
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /plugin
+            - name: registration-dir
+              mountPath: /registration/
+        - name: liveness-probe
+          image: quay.io/k8scsi/livenessprobe:v2.0.0
+          imagePullPolicy: "Always"
+          args:
+            - "--v=4"
+            - "--csi-address=$(ADDRESS)"
+            - "--probe-timeout=60s"
+            - "--health-port=9809"
+          env:
+            - name: ADDRESS
+              value: /plugin/nfscsi.sock
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /plugin
+        - name: mapr-kdfplugin
+          securityContext:
+            privileged: true
+            capabilities:
+              add: ["SYS_ADMIN"]
+            allowPrivilegeEscalation: true
+          image: maprtech/csi-nfsplugin:1.0.1
+          imagePullPolicy: "Always"
+          args :
+            - "--nodeid=$(NODE_ID)"
+            - "--endpoint=$(CSI_ENDPOINT)"
+            - "--maxvolumepernode=20"
+            - "--maxlogsizemb=10"
+            - "--v=4"
+          env:
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: CSI_ENDPOINT
+              value: unix://plugin/nfscsi.sock
+          ports:
+          - containerPort: 9809
+            name: healthz
+            protocol: TCP
+          livenessProbe:
+            failureThreshold: 20
+            httpGet:
+              path: /healthz
+              port: healthz
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 5
+          volumeMounts:
+            - name: plugin-dir
+              mountPath: /plugin
+            - name: pods-mount-dir
+              mountPath: /var/lib/kubelet
+              mountPropagation: Bidirectional
+            - name: k8s-log-dir
+              mountPath: /var/log/csi-maprkdf
+            - name: timezone
+              mountPath: /etc/localtime
+              readOnly: true
+            - name: core-path
+              mountPath: /opt/cores
+            - name: device-dir
+              mountPath: /dev
+      volumes:
+        - name: plugin-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins/com.mapr.csi-nfskdf
+            type: DirectoryOrCreate
+        - name: registration-dir
+          hostPath:
+            path: /var/lib/kubelet/plugins_registry
+            type: Directory
+        - name: pods-mount-dir
+          hostPath:
+            path: /var/lib/kubelet
+            type: Directory
+        - name: k8s-log-dir
+          hostPath:
+            path: /var/log/csi-maprkdf
+            type: DirectoryOrCreate
+        - name: timezone
+          hostPath:
+            path: /etc/localtime
+        - name: core-path
+          hostPath:
+            path: /opt/cores
+        - name: device-dir
+          hostPath:
+            path: /dev
+            type: Directory
+
+---
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: csi-controller-nfskdf
+  namespace: mapr-nfscsi
+spec:
+  selector:
+    matchLabels:
+      app: csi-controller-nfskdf # has to match .spec.template.metadata.labels  
+  serviceName: "kdf-provisioner-nfs-svc"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: csi-controller-nfskdf
+    spec:
+      serviceAccount: csi-controller-nfs-sa
+      priorityClassName: mapr-nfscsi-critical
+      containers:
+        - name: csi-attacher
+          securityContext:
+            privileged: true
+          image: quay.io/k8scsi/csi-attacher:v2.2.0
+          args:
+            - "--v=5"
+            - "--csi-address=$(ADDRESS)"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/nfscsi.sock
+          imagePullPolicy: "Always"
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: csi-provisioner
+          image: quay.io/k8scsi/csi-provisioner:v1.6.0
+          args:
+            - "--provisioner=com.mapr.csi-nfskdf"
+            - "--csi-address=$(ADDRESS)"
+            - "--volume-name-prefix=mapr-pv"
+            - "--timeout=300s" # large timeout to accommodate volume clone
+            - "--v=5"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/nfscsi.sock
+          imagePullPolicy: "Always"
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: csi-snapshotter
+          image: quay.io/k8scsi/csi-snapshotter:v3.0.2 # Works on k8s >= 1.17 when snapshotter moved from v1alpha1 to v1beta1, use v1.0.2 for k8s <= 1.16
+          imagePullPolicy: "Always"
+          args:
+            - "--csi-address=$(ADDRESS)"
+            - "--snapshot-name-prefix=mapr-snapshot"
+            - "--timeout=300s" # large timeout to accommodate volume restore from snapshot
+            - "--v=5"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/nfscsi.sock
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: csi-snapshot-controller # Not required on k8s <= 1.16
+          image: quay.io/k8scsi/snapshot-controller:v3.0.2 
+          imagePullPolicy: "Always"
+          args:
+            - "--leader-election=false"
+            - "--v=5"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/nfscsi.sock
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: liveness-probe
+          image: quay.io/k8scsi/livenessprobe:v2.0.0
+          imagePullPolicy: "Always"
+          args:
+            - "--v=4"
+            - "--csi-address=$(ADDRESS)"
+            - "--probe-timeout=60s"
+            - "--health-port=9809"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/nfscsi.sock
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: csi-resizer
+          image: quay.io/k8scsi/csi-resizer:v0.5.0
+          imagePullPolicy: "Always"
+          args:
+            - "--v=5"
+            - "--csi-address=$(ADDRESS)"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/nfscsi.sock
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: mapr-kdfprovisioner
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+          image: maprtech/csi-kdfprovisioner:1.2.1
+          imagePullPolicy: "Always"
+          args :
+            - "--nodeid=$(NODE_ID)"
+            - "--endpoint=$(CSI_ENDPOINT)"
+            - "--drivername=com.mapr.csi-nfskdf"
+            - "--driverversion=1.0.0"
+            - "--uniquename=k8s"
+            - "--statevolmountprefix=/apps/ksql"
+            - "--v=4"
+          env:
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: CSI_ENDPOINT
+              value: unix://plugin/nfscsi.sock
+          ports:
+          - containerPort: 9809
+            name: healthz
+            protocol: TCP
+          livenessProbe:
+            failureThreshold: 20
+            httpGet:
+              path: /healthz
+              port: healthz
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 5
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /plugin
+            - name: k8s-log-dir
+              mountPath: /var/log/csi-maprkdf
+            - name: timezone
+              mountPath: /etc/localtime
+              readOnly: true
+      volumes:
+        - name: socket-dir
+          emptyDir: {}
+        - name: k8s-log-dir
+          hostPath:
+            path: /var/log/csi-maprkdf
+            type: DirectoryOrCreate
+        - name: timezone
+          hostPath:
+            path: /etc/localtime

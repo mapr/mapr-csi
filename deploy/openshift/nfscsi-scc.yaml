@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: SecurityContextConstraints
+metadata:
+  name: maprnfscsi-scc
+defaultAddCapabilities: null
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: RunAsAny
+fsGroup:
+  type: RunAsAny
+priority: null
+readOnlyRootFilesystem: false
+requiredDropCapabilities: null
+seccompProfiles:
+- '*'
+supplementalGroups:
+  type: RunAsAny
+users:
+- system:serviceaccount:mapr-nfscsi:csi-controller-nfs-sa
+- system:serviceaccount:mapr-nfscsi:csi-nodeplugin-nfs-sa
+volumes:
+- '*'
+allowHostDirVolumePlugin: true
+allowHostIPC: true
+allowHostNetwork: true
+allowHostPID: true
+allowHostPorts: true
+allowPrivilegeEscalation: true
+allowPrivilegedContainer: true
+allowedCapabilities:
+- '*'
