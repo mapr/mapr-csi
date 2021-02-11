@@ -1,0 +1,39 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: testcsi-dynamic-pvc-clone
+  namespace: test-csi
+spec:
+  storageClassName: test-dynamic-sc
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5G
+  dataSource:
+    kind: PersistentVolumeClaim
+    name: test-dynamic-pvc
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-dynamic-pod-clone
+  namespace: test-csi
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    args:
+    - sleep
+    - "1000000"
+    resources:
+      requests:
+        memory: "2Gi"
+        cpu: "500m"
+    volumeMounts:
+    - mountPath: /dynamic
+      name: data
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: testcsi-dynamic-pvc-clone

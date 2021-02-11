@@ -1,0 +1,170 @@
+############  Controller/Provisioner StatefulSet ############
+
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: hpe-ezmeral-csi-controller
+  namespace: {{ .Release.Namespace }}
+spec:
+  selector:
+    matchLabels:
+      app: hpe-ezmeral-csi-controller # has to match .spec.template.metadata.labels  
+  serviceName: "kdf-provisioner-svc"
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: hpe-ezmeral-csi-controller
+    spec:
+      serviceAccount: csi-controller-sa
+      priorityClassName: {{ .Release.Namespace }}-fuse-critical
+      containers:
+        - name: csi-attacher
+          securityContext:
+            privileged: true
+          image: quay.io/k8scsi/csi-attacher:v2.2.0
+          args:
+            - "--v=5"
+            - "--csi-address=$(ADDRESS)"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          imagePullPolicy: "Always"
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: csi-provisioner
+          image: quay.io/k8scsi/csi-provisioner:v1.6.0
+          args:
+            - "--provisioner=com.mapr.csi-kdf"
+            - "--csi-address=$(ADDRESS)"
+            - "--volume-name-prefix=mapr-pv"
+            - "--timeout=300s" # large timeout to accommodate volume clone
+            - "--v=5"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          imagePullPolicy: "Always"
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        {{- if and (eq .Capabilities.KubeVersion.Major "1") ( ge  ( trimSuffix "+" .Capabilities.KubeVersion.Minor ) "17") }}
+        - name: csi-snapshotter
+          image: quay.io/k8scsi/csi-snapshotter:v3.0.2 
+          imagePullPolicy: "Always"
+          args:
+            - "--csi-address=$(ADDRESS)"
+            - "--snapshot-name-prefix=mapr-snapshot"
+            - "--timeout=300s" # large timeout to accommodate volume restore from snapshot
+            - "--v=5"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        - name: csi-snapshot-controller 
+          image: quay.io/k8scsi/snapshot-controller:v3.0.2
+          imagePullPolicy: "Always"
+          args:
+            - "--leader-election=false"
+            - "--v=5"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        {{- else }}
+        - name: csi-snapshotter
+          image: quay.io/k8scsi/csi-snapshotter:v1.0.2
+          imagePullPolicy: "Always"
+          args:
+            - "--csi-address=$(ADDRESS)"
+            - "--snapshot-name-prefix=mapr-snapshot"
+            - "--timeout=30s"
+            - "--v=5"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        {{- end }}
+        - name: liveness-probe
+          image: quay.io/k8scsi/livenessprobe:v2.0.0
+          imagePullPolicy: "Always"
+          args:
+            - "--v=4"
+            - "--csi-address=$(ADDRESS)"
+            - "--probe-timeout=60s"
+            - "--health-port=9809"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        {{- if and (eq .Capabilities.KubeVersion.Major "1") ( ge  ( trimSuffix "+" .Capabilities.KubeVersion.Minor ) "15") }}
+        - name: csi-resizer
+          image: quay.io/k8scsi/csi-resizer:v0.5.0
+          imagePullPolicy: "Always"
+          args:
+            - "--v=5"
+            - "--csi-address=$(ADDRESS)"
+          env:
+            - name: ADDRESS
+              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /var/lib/csi/sockets/pluginproxy/
+        {{- end }}
+        - name: ezmeral-csi-driver
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+          image: {{ .Values.controllerImage }}
+          imagePullPolicy: {{ .Values.pullPolicy | quote }}
+          args :
+            - "--nodeid=$(NODE_ID)"
+            - "--endpoint=$(CSI_ENDPOINT)"
+            - "--uniquename=k8s"
+            - "--statevolmountprefix=/apps/ksql"
+            - "--v=4"
+          env:
+            - name: NODE_ID
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: CSI_ENDPOINT
+              value: unix://plugin/csi.sock
+          ports:
+          - containerPort: 9809
+            name: healthz
+            protocol: TCP
+          livenessProbe:
+            failureThreshold: 20
+            httpGet:
+              path: /healthz
+              port: healthz
+            initialDelaySeconds: 10
+            timeoutSeconds: 3
+            periodSeconds: 5
+          volumeMounts:
+            - name: socket-dir
+              mountPath: /plugin
+            - name: k8s-log-dir
+              mountPath: /var/log/csi-maprkdf
+            - name: timezone
+              mountPath: /etc/localtime
+              readOnly: true
+      volumes:
+        - name: socket-dir
+          emptyDir: {}
+        - name: k8s-log-dir
+          hostPath:
+            path: /var/log/csi-maprkdf
+            type: DirectoryOrCreate
+        - name: timezone
+          hostPath:
+            path: /etc/localtime

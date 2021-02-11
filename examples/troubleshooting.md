@@ -4,7 +4,7 @@ The following describe the possible causes and fix for any of the following issu
 
 ### Installation
 
-MapR CSI storage plugin is deployed in `mapr-csi` namespace, by default.  
+HPE Ezmeral Data Fabric CSI storage plugin is deployed in `mapr-csi` namespace, by default.  
 
 To verify the installation, following the below procedure:  
 1. Verify all the driver components are deployed correctly and is in RUNNING state.  
@@ -15,12 +15,12 @@ $ kubectl get pods -n mapr-csi
 
 a) The following should be generated on each Kubernetes worker nodes where the plugin daemonset pod is scheduled to run.  
 ```bash
-$ cat /var/log/csi-maprkdf/csi-plugin-1.1.0.log
+$ cat /var/log/csi-maprkdf/csi-plugin-<version>.log
 ```
 
 b) The following should be generated where the provisioner stateful pod is running.  
 ```bash
-$ cat /var/log/csi-maprkdf/csi-provisioner-1.1.0.log
+$ cat /var/log/csi-maprkdf/csi-provisioner-<version>.log
  ```
  
 ### Usage
@@ -30,25 +30,25 @@ $ cat /var/log/csi-maprkdf/csi-provisioner-1.1.0.log
 
 See the CSI Storage plug-in log and check for any mount/unmount errors:  
 ```bash
-$ tail -100f /var/log/csi-maprkdf/csi-plugin-1.1.0.log
+$ tail -100f /var/log/csi-maprkdf/csi-plugin-<version>.log
 ```  
 Note: Check the above on the Kubernetes worker node where the application pod (using CSI) is scheduled to run.  
 
-#### Troubleshooting MapR CSI Storage Plugin discovery with kubelet
+#### Troubleshooting HPE Ezmeral Data Fabric CSI Storage Plugin discovery with kubelet
 
 Verify the kubelet path for kubernetes with --root-dir. The --root-dir contains the directory path for managing kubelet files (such as volume mounts, etc.,) and defaults to /var/lib/kubelet.  
-If the kubernetes environment has a different kubelet path, modify the [deployment yaml](../deploy/kubernetes/csi-maprkdf-v1.1.0.yaml) with new path and redeploy the MapR CSI Storage Plugin.
+If the kubernetes environment has a different kubelet path, modify the [deployment yaml](../deploy/kubernetes/csi-maprkdf-v1.2.0.yaml) with new path and redeploy the HPE Ezmeral Data Fabric CSI Storage Plugin.
 
 #### Troubleshooting a volume provisioning
 
 See the provisioner log and check for any provisioner errors:  
 ```bash
-$ tail -100f /var/log/csi-maprkdf/csi-provisioner-1.1.0.log
+$ tail -100f /var/log/csi-maprkdf/csi-provisioner-<version>.log
 ```
 
 #### Troubleshooting provisioned volume
 
-To get the MapR volume with mount-path provisioned, run the following and see the `VolumeHandle` and `volumePath`.  
+To get the HPE Ezmeral Data Fabric volume with mount-path provisioned, run the following and see the `VolumeHandle` and `volumePath`.  
 ```bash
 $ kubectl describe pv <dynamically-provisioned-pv-name> -n <namespace>
 ```

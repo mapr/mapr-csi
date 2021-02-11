@@ -1,0 +1,16 @@
+# Use the 'create api' subcommand to add watches to this file.
+- group: ezmeral.hpe.com
+  version: v1
+  kind: HPEEzmeralCSIDriver
+  chart: helm-charts/hpe-ezmeral-csi-driver
+  overrideValues:
+    nodeImage: $CSI_NODE_IMAGE
+    controllerImage: $CSI_CONTROLLER_IMAGE
+- group: ezmeral.hpe.com
+  version: v1
+  kind: HPEEzmeralNFSCSIDriver
+  chart: helm-charts/hpe-ezmeral-nfs-csi-driver
+  overrideValues:
+    nodeImage: $NFSCSI_NODE_IMAGE
+    controllerImage: $CSI_CONTROLLER_IMAGE
+# +kubebuilder:scaffold:watch
