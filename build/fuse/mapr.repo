@@ -8,6 +8,6 @@ gpgcheck = 1
 [MapR_MEP]
 name = MapR MEP Components
 enabled = 1
-baseurl = http://package.mapr.com/releases/MEP/MEP-7.0.1/redhat/
+baseurl = http://package.mapr.com/releases/MEP/MEP-7.1.0/redhat/
 protected = 1
 gpgcheck = 1

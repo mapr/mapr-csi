@@ -15,12 +15,12 @@ $ kubectl get pods -n mapr-csi
 
 a) The following should be generated on each Kubernetes worker nodes where the plugin daemonset pod is scheduled to run.  
 ```bash
-$ cat /var/log/csi-maprkdf/csi-plugin-<version>.log
+$ cat /var/log/csi-maprkdf/csi-plugin.log #csi-nfsplugin.log for Loopback NFS Driver
 ```
 
 b) The following should be generated where the provisioner stateful pod is running.  
 ```bash
-$ cat /var/log/csi-maprkdf/csi-provisioner-<version>.log
+$ cat /var/log/csi-maprkdf/csi-provisioner.log #csi-nfsprovisioner.log for Loopback NFS Driver
  ```
  
 ### Usage
@@ -30,7 +30,7 @@ $ cat /var/log/csi-maprkdf/csi-provisioner-<version>.log
 
 See the CSI Storage plug-in log and check for any mount/unmount errors:  
 ```bash
-$ tail -100f /var/log/csi-maprkdf/csi-plugin-<version>.log
+$ tail -100f /var/log/csi-maprkdf/csi-plugin.log #csi-nfsplugin.log for Loopback NFS Driver
 ```  
 Note: Check the above on the Kubernetes worker node where the application pod (using CSI) is scheduled to run.  
 
@@ -43,7 +43,7 @@ If the kubernetes environment has a different kubelet path, modify the [deployme
 
 See the provisioner log and check for any provisioner errors:  
 ```bash
-$ tail -100f /var/log/csi-maprkdf/csi-provisioner-<version>.log
+$ tail -100f /var/log/csi-maprkdf/csi-provisioner.log #csi-nfsprovisioner.log for Loopback NFS Driver
 ```
 
 #### Troubleshooting provisioned volume
