@@ -24,7 +24,7 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
 # Copy utils, driver and set entrypoint
-COPY --from=maprtech/csi-kdfdriver:1.2.1 \
+COPY --from=maprtech/csi-kdfdriver \
     /go/src/plugin/bin/* /opt/mapr/bin/
 RUN chmod +x /opt/mapr/bin/csi-kdfplugin; \
    chmod +x /opt/mapr/bin/start-fuse;

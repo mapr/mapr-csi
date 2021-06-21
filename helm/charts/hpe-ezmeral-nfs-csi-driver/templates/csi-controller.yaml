@@ -3,21 +3,21 @@
 kind: StatefulSet
 apiVersion: apps/v1
 metadata:
-  name: hpe-ezmeral-csi-controller
+  name: hpe-ezmeral-nfscsi-controller
   namespace: {{ .Release.Namespace }}
 spec:
   selector:
     matchLabels:
-      app: hpe-ezmeral-csi-controller # has to match .spec.template.metadata.labels  
-  serviceName: "kdf-provisioner-svc"
+      app: hpe-ezmeral-nfscsi-controller # has to match .spec.template.metadata.labels  
+  serviceName: "kdf-provisioner-nfs-svc"
   replicas: 1
   template:
     metadata:
       labels:
-        app: hpe-ezmeral-csi-controller
+        app: hpe-ezmeral-nfscsi-controller
     spec:
-      serviceAccount: csi-controller-sa
-      priorityClassName: {{ .Release.Namespace }}-fuse-critical
+      serviceAccount: csi-controller-nfs-sa
+      priorityClassName: {{ .Release.Namespace }}-nfs-critical
       containers:
         - name: csi-attacher
           securityContext:
@@ -28,7 +28,7 @@ spec:
             - "--csi-address=$(ADDRESS)"
           env:
             - name: ADDRESS
-              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+              value: /var/lib/csi/sockets/pluginproxy/nfscsi.sock
           imagePullPolicy: "Always"
           volumeMounts:
             - name: socket-dir
@@ -36,21 +36,21 @@ spec:
         - name: csi-provisioner
           image: quay.io/k8scsi/csi-provisioner:v1.6.0
           args:
-            - "--provisioner=com.mapr.csi-kdf"
+            - "--provisioner=com.mapr.csi-nfskdf"
             - "--csi-address=$(ADDRESS)"
             - "--volume-name-prefix=mapr-pv"
             - "--timeout=300s" # large timeout to accommodate volume clone
             - "--v=5"
           env:
             - name: ADDRESS
-              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+              value: /var/lib/csi/sockets/pluginproxy/nfscsi.sock
           imagePullPolicy: "Always"
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         {{- if and (eq .Capabilities.KubeVersion.Major "1") ( ge  ( trimSuffix "+" .Capabilities.KubeVersion.Minor ) "17") }}
         - name: csi-snapshotter
-          image: quay.io/k8scsi/csi-snapshotter:v3.0.2 
+          image: quay.io/k8scsi/csi-snapshotter:v3.0.2
           imagePullPolicy: "Always"
           args:
             - "--csi-address=$(ADDRESS)"
@@ -59,19 +59,19 @@ spec:
             - "--v=5"
           env:
             - name: ADDRESS
-              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+              value: /var/lib/csi/sockets/pluginproxy/nfscsi.sock
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
-        - name: csi-snapshot-controller 
-          image: quay.io/k8scsi/snapshot-controller:v3.0.2
+        - name: csi-snapshot-controller
+          image: quay.io/k8scsi/snapshot-controller:v3.0.2 
           imagePullPolicy: "Always"
           args:
             - "--leader-election=false"
             - "--v=5"
           env:
             - name: ADDRESS
-              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+              value: /var/lib/csi/sockets/pluginproxy/nfscsi.sock
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
@@ -86,13 +86,13 @@ spec:
             - "--v=5"
           env:
             - name: ADDRESS
-              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+              value: /var/lib/csi/sockets/pluginproxy/nfscsi.sock
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
         {{- end }}
         - name: liveness-probe
-          image: quay.io/k8scsi/livenessprobe:v2.0.0
+          image: quay.io/k8scsi/livenessprobe:v2.2.0
           imagePullPolicy: "Always"
           args:
             - "--v=4"
@@ -101,7 +101,7 @@ spec:
             - "--health-port=9809"
           env:
             - name: ADDRESS
-              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+              value: /var/lib/csi/sockets/pluginproxy/nfscsi.sock
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
@@ -114,7 +114,7 @@ spec:
             - "--csi-address=$(ADDRESS)"
           env:
             - name: ADDRESS
-              value: /var/lib/csi/sockets/pluginproxy/csi.sock
+              value: /var/lib/csi/sockets/pluginproxy/nfscsi.sock
           volumeMounts:
             - name: socket-dir
               mountPath: /var/lib/csi/sockets/pluginproxy/
@@ -128,6 +128,8 @@ spec:
           args :
             - "--nodeid=$(NODE_ID)"
             - "--endpoint=$(CSI_ENDPOINT)"
+            - "--drivername=com.mapr.csi-nfskdf"
+            - "--driverversion=1.0.2"
             - "--uniquename=k8s"
             - "--statevolmountprefix=/apps/ksql"
             - "--v=4"
@@ -137,7 +139,7 @@ spec:
                 fieldRef:
                   fieldPath: spec.nodeName
             - name: CSI_ENDPOINT
-              value: unix://plugin/csi.sock
+              value: unix://plugin/nfscsi.sock
           ports:
           - containerPort: 9809
             name: healthz

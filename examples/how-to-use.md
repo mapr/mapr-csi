@@ -1,7 +1,7 @@
 ## How to use
 
 HPE Ezmeral Data Fabric CSI Storage plugin supports Static and Dynamic volume provisioning for Containers. See the following to use it in 
-kubernetes environment.
+kubernetes environment. 
 
 Note: Sensitive data contained in a Secret (*secret.yaml) must be represented in base64 encoded value.  
 For example, the following convert a string to a base64 value:  
@@ -10,7 +10,12 @@ $ echo -n 'mapr' | base64
 ```  
 The output shows the base64 representation of the string mapr is `bWFwcg==`
 
-      
+Note: For running the examples against Loopback NFS CSI Driver, replace all `com.mapr.csi-kdf` references with `com.mapr.csi-nfskdf` in the example yamls
+```bash
+$ cd examples
+$ sed -i 's/com.mapr.csi-kdf/com.mapr.csi-nfskdf/g' *.yaml
+```
+
 ### Static Volume Provisioning
 
 The following video demonstrates the procedure for static provisioning in a single-node Kubernetes cluster and the HPE Ezmeral Data Fabric sandbox:
@@ -130,7 +135,7 @@ $ kubectl get pv -n test-csi
 Note: If PV is not created, see the provisioner log from provisioner deployed worker node for more info:
 
 ```bash
-$ cat /var/log/csi-maprkdf/csi-provisioner-<version>.log
+$ cat /var/log/csi-maprkdf/csi-provisioner.log #csi-nfsprovisioner.log for Loopback NFS Driver
 ```
 
 7) Create Pod using above PVC
@@ -233,7 +238,7 @@ $ kubectl get pv -n test-csi
 Note: If PV is not created, see the provisioner log from provisioner deployed worker node for more info:
 
 ```bash
-$ cat /var/log/csi-maprkdf/csi-provisioner-<version>.log
+$ cat /var/log/csi-maprkdf/csi-provisioner.log #csi-nfsprovisioner.log for Loopback NFS Driver
 ```
 
 7) Create Volume SnapshotClass for snapshot

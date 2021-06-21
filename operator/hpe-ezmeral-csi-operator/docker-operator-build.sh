@@ -9,7 +9,7 @@ EZMERAL_CSI_OPERATOR_TAG=${EZMERAL_CSI_OPERATOR_TAG:-mapr}
 
 # stage directory for build
 IMG_DIR=$(dirname $0)
-HELM_DIR=${IMG_DIR}/../../helm
+HELM_DIR=${IMG_DIR}/../../helm/charts
 rm -rf ${IMG_DIR}/helm-charts ${IMG_DIR}/LICENSE
 
 mkdir -p ${IMG_DIR}/helm-charts
