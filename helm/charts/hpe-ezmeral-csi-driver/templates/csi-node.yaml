@@ -71,7 +71,7 @@ spec:
           args :
             - "--nodeid=$(NODE_ID)"
             - "--endpoint=$(CSI_ENDPOINT)"
-            - "--maxvolumepernode=20"
+            - "--maxvolumepernode=100"
             - "--maxlogsizemb=10"
             - "--v=4"
           env:

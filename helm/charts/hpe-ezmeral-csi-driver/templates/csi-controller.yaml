@@ -128,7 +128,7 @@ spec:
           args :
             - "--nodeid=$(NODE_ID)"
             - "--endpoint=$(CSI_ENDPOINT)"
-            - "--driverversion=1.2.2"
+            - "--driverversion=1.2.3"
             - "--uniquename=k8s"
             - "--statevolmountprefix=/apps/ksql"
             - "--v=4"
