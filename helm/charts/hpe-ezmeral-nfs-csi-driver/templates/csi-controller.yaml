@@ -129,7 +129,7 @@ spec:
             - "--nodeid=$(NODE_ID)"
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--drivername=com.mapr.csi-nfskdf"
-            - "--driverversion=1.0.3"
+            - "--driverversion={{ (split ":" .Values.nodeImage)._1 }}"
             - "--uniquename=k8s"
             - "--statevolmountprefix=/apps/ksql"
             - "--v=4"
