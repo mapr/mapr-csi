@@ -43,6 +43,7 @@ spec:
             - "--provisioner=com.mapr.csi-kdf"
           {{- end }}
             - "--csi-address=$(ADDRESS)"
+            - "--default-fstype=ext4"
             - "--volume-name-prefix=mapr-pv"
             - "--timeout=300s" # large timeout to accommodate volume clone
             - "--v=5"
