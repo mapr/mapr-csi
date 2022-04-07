@@ -357,7 +357,7 @@ spec:
           image: k8s.gcr.io/sig-storage/csi-provisioner:v3.0.0
           args:
             - "--csi-address=$(ADDRESS)"
-            - "--default-fstype=ext4"
+            - "--default-fstype=maprfs"
             - "--volume-name-prefix=mapr-pv"
             - "--timeout=300s" # large timeout to accommodate volume clone
             - "--v=5"
