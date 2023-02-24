@@ -2,6 +2,28 @@ apiVersion: v1
 entries:
   hpe-ezmeral-csi-driver:
   - apiVersion: v1
+    appVersion: 1.2.8
+    created: "2023-02-22T01:12:57.742540878-08:00"
+    description: A Helm chart for installing the HPE Ezmeral Data Fabric CSI Driver (FUSE) for Kubernetes
+    digest: 9b86c3eebbb42ecb6064ffa6d14151ceeeca788a553157383c345b2cf2ebfed1
+    home: https://www.hpe.com/us/en/software/data-fabric.html
+    icon: https://raw.githubusercontent.com/mapr/mapr-csi/master/docs/assets/hpe_ezmeral.png
+    keywords:
+    - HPE
+    - EzmeralDataFabric
+    - FileSystemVolume
+    - BlockVolume
+    - Fuse
+    maintainers:
+    - email: ezmeral-csi-support@hpe.com
+      name: HPE Ezmeral Data Fabric
+    name: hpe-ezmeral-csi-driver
+    sources:
+    - https://docs.datafabric.hpe.com/home/CSIdriver/csi_overview.html
+    urls:
+    - hpe-ezmeral-csi-driver-1.2.8.tgz
+    version: 1.2.8
+  - apiVersion: v1
     appVersion: 1.2.7
     created: "2022-01-04T11:00:22.5586+05:30"
     description: A Helm chart for installing the HPE Ezmeral Data Fabric CSI Driver
@@ -186,6 +208,28 @@ entries:
     - hpe-ezmeral-csi-driver-1.2.0.tgz
     version: 1.2.0
   hpe-ezmeral-nfs-csi-driver:
+  - apiVersion: v1
+    appVersion: 1.0.8
+    created: "2023-02-22T01:13:01.942878381-08:00"
+    description: A Helm chart for installing the HPE Ezmeral Data Fabric CSI Driver (NFS) for Kubernetes
+    digest: cd280f644227453b3a9b303a14be69727d14260af3d18a9945d56cc3b9a0ef83
+    home: https://www.hpe.com/us/en/software/data-fabric.html
+    icon: https://raw.githubusercontent.com/mapr/mapr-csi/master/docs/assets/hpe_ezmeral.png
+    keywords:
+    - HPE
+    - EzmeralDataFabric
+    - FileSystemVolume
+    - BlockVolume
+    - LoopbackNFS
+    maintainers:
+    - email: ezmeral-csi-support@hpe.com
+      name: HPE Ezmeral Data Fabric
+    name: hpe-ezmeral-nfs-csi-driver
+    sources:
+    - https://docs.datafabric.hpe.com/home/CSIdriver/csi_overview.html
+    urls:
+    - hpe-ezmeral-nfs-csi-driver-1.0.8.tgz
+    version: 1.0.8
   - apiVersion: v1
     appVersion: 1.0.7
     created: "2022-01-04T11:00:58.343031+05:30"
