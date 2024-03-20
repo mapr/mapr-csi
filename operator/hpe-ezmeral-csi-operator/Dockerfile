@@ -3,7 +3,7 @@ FROM quay.io/operator-framework/helm-operator:v1.26.0
 LABEL name="HPE Ezmeral CSI Operator" \
       maintainer="HPE Ezmeral Data Fabric" \
       vendor="HPE" \
-      version="1.0.9" \
+      version="1.0.10" \
       release="1.0" \
       summary="HPE Ezmeral CSI Operator" \
       description="HPE Ezmeral Data Fabric CSI Operator for Kubernetes" \

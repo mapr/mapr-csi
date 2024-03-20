@@ -1,3 +1,3 @@
 #!/bin/sh
 
-docker build --force-rm --pull -t docker.io/maprtech/csi-customkdfplugin:latest .
+docker build --progress=plain --force-rm --pull -t docker.io/maprtech/csi-customkdfplugin:latest .

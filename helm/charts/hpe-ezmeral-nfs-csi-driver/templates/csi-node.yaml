@@ -131,6 +131,7 @@ spec:
         - name: core-path
           hostPath:
             path: /opt/cores
+            type: DirectoryOrCreate
         - name: device-dir
           hostPath:
             path: /dev
