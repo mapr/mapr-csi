@@ -1,7 +1,7 @@
 [MapR_Core]
 name = MapR Core Components
 enabled = 1
-baseurl = https://package.ezmeral.hpe.com/releases/v7.6.1/redhat/
+baseurl = https://package.ezmeral.hpe.com/releases/v7.7.0/redhat/
 username = <EMAIL>
 password = <TOKEN>
 protected = 1
@@ -10,7 +10,7 @@ gpgcheck = 1
 [MapR_MEP]
 name = MapR MEP Components
 enabled = 1
-baseurl = https://package.ezmeral.hpe.com/releases/MEP/MEP-9.2.1/redhat/
+baseurl = https://package.ezmeral.hpe.com/releases/MEP/MEP-9.2.2/redhat/
 username = <EMAIL>
 password = <TOKEN>
 protected = 1
