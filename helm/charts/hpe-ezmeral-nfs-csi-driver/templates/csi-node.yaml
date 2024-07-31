@@ -22,7 +22,7 @@ spec:
         - name: csi-node-driver-registrar
           securityContext:
             privileged: true
-          image: k8s.gcr.io/sig-storage/csi-node-driver-registrar:v2.6.2
+          image: registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.10.1
           imagePullPolicy: "Always"
           args:
             - "--v=5"
@@ -47,7 +47,7 @@ spec:
         - name: liveness-probe
           securityContext:
             privileged: true
-          image: k8s.gcr.io/sig-storage/livenessprobe:v2.9.0
+          image: registry.k8s.io/sig-storage/livenessprobe:v2.12.0
           imagePullPolicy: "Always"
           args:
             - "--v=4"
@@ -66,7 +66,7 @@ spec:
             capabilities:
               add: ["SYS_ADMIN"]
             allowPrivilegeEscalation: true
-          image: {{ .Values.nodeImage }}
+          image: {{ .Values.nodeImage | quote }}
           imagePullPolicy: {{ .Values.pullPolicy | quote }}
           args :
             - "--nodeid=$(NODE_ID)"
