@@ -435,7 +435,7 @@ spec:
             - "--nodeid=$(NODE_ID)"
             - "--endpoint=$(CSI_ENDPOINT)"
             - "--drivername=com.mapr.csi-nfskdf"
-            - "--driverversion=1.0.11"
+            - "--driverversion=1.0.12"
             - "--uniquename=k8s"
             - "--statevolmountprefix=/apps/ksql"
             - "--v=4"
