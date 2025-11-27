@@ -1,0 +1,8 @@
+apiVersion: storage.k8s.io/v1
+kind: VolumeAttributesClass
+metadata:
+  name: test-vac
+driverName: com.mapr.csi-kdf
+parameters:
+  nsreplication: "3"
+  wiresecurityenabled: "true"

@@ -164,6 +164,9 @@ rules:
     resources: ["customresourcedefinitions"]
     verbs: ["create", "list", "watch", "delete"]
   - apiGroups: ["storage.k8s.io"]
+    resources: ["volumeattributesclasses"]
+    verbs: ["get", "list", "watch" , "update", "patch", "delete", "create"]
+  - apiGroups: ["storage.k8s.io"]
     resources: ["csinodes"]
     verbs: ["get", "list", "watch"]
 

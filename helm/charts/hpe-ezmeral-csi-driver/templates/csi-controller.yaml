@@ -22,7 +22,7 @@ spec:
         - name: csi-attacher
           securityContext:
             privileged: true
-          image: registry.k8s.io/sig-storage/csi-attacher:v4.9.0
+          image: registry.k8s.io/sig-storage/csi-attacher:v4.10.0
           args:
             - "--v=5"
             - "--csi-address=$(ADDRESS)"
@@ -35,7 +35,7 @@ spec:
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: csi-provisioner
           {{- if and (eq .Capabilities.KubeVersion.Major "1") ( ge  ( trimSuffix "+" .Capabilities.KubeVersion.Minor ) "20") }}
-          image: registry.k8s.io/sig-storage/csi-provisioner:v5.3.0
+          image: registry.k8s.io/sig-storage/csi-provisioner:v6.0.0
           args:
           {{- else }}
           image: registry.k8s.io/sig-storage/csi-provisioner:v1.6.0
@@ -57,7 +57,7 @@ spec:
         {{- if and (eq .Capabilities.KubeVersion.Major "1") ( ge  ( trimSuffix "+" .Capabilities.KubeVersion.Minor ) "17") }}
         - name: csi-snapshotter
           {{- if and (eq .Capabilities.KubeVersion.Major "1") ( ge  ( trimSuffix "+" .Capabilities.KubeVersion.Minor ) "20") }}
-          image: registry.k8s.io/sig-storage/csi-snapshotter:v8.2.0
+          image: registry.k8s.io/sig-storage/csi-snapshotter:v8.4.0
           {{- else }}
           image: registry.k8s.io/sig-storage/csi-snapshotter:v3.0.2
           {{- end }}
@@ -75,7 +75,7 @@ spec:
               mountPath: /var/lib/csi/sockets/pluginproxy/
         - name: csi-snapshot-controller
           {{- if and (eq .Capabilities.KubeVersion.Major "1") ( ge  ( trimSuffix "+" .Capabilities.KubeVersion.Minor ) "20") }} 
-          image: registry.k8s.io/sig-storage/snapshot-controller:v8.2.0
+          image: registry.k8s.io/sig-storage/snapshot-controller:v8.4.0
           {{- else }}
           image: registry.k8s.io/sig-storage/snapshot-controller:v3.0.2
           {{- end }}
@@ -106,7 +106,7 @@ spec:
               mountPath: /var/lib/csi/sockets/pluginproxy/
         {{- end }}
         - name: liveness-probe
-          image: registry.k8s.io/sig-storage/livenessprobe:v2.16.0
+          image: registry.k8s.io/sig-storage/livenessprobe:v2.17.0
           imagePullPolicy: "Always"
           args:
             - "--v=4"
@@ -121,7 +121,7 @@ spec:
               mountPath: /var/lib/csi/sockets/pluginproxy/
         {{- if and (eq .Capabilities.KubeVersion.Major "1") ( ge  ( trimSuffix "+" .Capabilities.KubeVersion.Minor ) "16") }}
         - name: csi-resizer
-          image: registry.k8s.io/sig-storage/csi-resizer:v1.14.0
+          image: registry.k8s.io/sig-storage/csi-resizer:v2.0.0
           imagePullPolicy: "Always"
           args:
             - "--v=5"

@@ -1,9 +1,9 @@
-FROM quay.io/operator-framework/helm-operator:v1.39
+FROM quay.io/operator-framework/helm-operator:v1.42
 
 LABEL name="HPE Ezmeral CSI Operator" \
       maintainer="HPE Ezmeral Data Fabric" \
       vendor="HPE" \
-      version="1.0.18" \
+      version="1.0.19" \
       release="1.0" \
       summary="HPE Ezmeral CSI Operator" \
       description="HPE Ezmeral Data Fabric CSI Operator for Kubernetes" \

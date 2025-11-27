@@ -4,5 +4,5 @@
 
 pullPolicy: IfNotPresent
 
-nodeImage: docker.io/maprtech/csi-kdfplugin:1.2.13
-controllerImage: docker.io/maprtech/csi-kdfprovisioner:1.2.11
+nodeImage: docker.io/maprtech/csi-kdfplugin:1.2.14
+controllerImage: docker.io/maprtech/csi-kdfprovisioner:1.2.12
