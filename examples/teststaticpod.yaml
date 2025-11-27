@@ -17,8 +17,8 @@ spec:
         cpu: "500m"
     volumeMounts:
     - mountPath: /static
-      name: maprflex
+      name: maprcsi
   volumes:
-    - name: maprflex
+    - name: maprcsi
       persistentVolumeClaim:
         claimName: test-static-pvc

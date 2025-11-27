@@ -5,6 +5,7 @@ metadata:
   name: test-dynamic-pvc
   namespace: test-csi
 spec:
+  volumeAttributesClassName: test-vac
   storageClassName: test-dynamic-sc
   accessModes:
     - ReadWriteOnce

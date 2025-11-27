@@ -1,6 +1,6 @@
-# HPE Ezmeral Data Fabric CSI Storage Plugin
+# HPE Data Fabric CSI Storage Plugin
 
-The HPE Ezmeral Data Fabric CSI Storage plugin provides the persistent storage for Application containers. 
+The HPE Data Fabric CSI Storage plugin provides the persistent storage for Application containers.
 For more information, Refer to [Documentation](https://docs.datafabric.hpe.com/home/CSIdriver/csi_overview.html)
 
 For Kubernetes & OpenShift support matrix, Refer to [Compatibility Matrix](https://docs.datafabric.hpe.com/home/InteropMatrix/r_csi_matrix.html)
