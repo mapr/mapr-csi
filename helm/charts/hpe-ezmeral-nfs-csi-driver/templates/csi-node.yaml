@@ -22,7 +22,7 @@ spec:
         - name: csi-node-driver-registrar
           securityContext:
             privileged: true
-          image: registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.15.0
+          image: registry.k8s.io/sig-storage/csi-node-driver-registrar:v2.16.0
           imagePullPolicy: "Always"
           args:
             - "--v=5"
@@ -47,7 +47,7 @@ spec:
         - name: liveness-probe
           securityContext:
             privileged: true
-          image: registry.k8s.io/sig-storage/livenessprobe:v2.17.0
+          image: registry.k8s.io/sig-storage/livenessprobe:v2.18.0
           imagePullPolicy: "Always"
           args:
             - "--v=4"
@@ -109,6 +109,11 @@ spec:
               mountPath: /opt/cores
             - name: device-dir
               mountPath: /dev
+            - name: host-sys
+              mountPath: /sys
+            - name: etc-selinux
+              mountPath: /etc/selinux
+              readOnly: true
       volumes:
         - name: plugin-dir
           hostPath:
@@ -137,3 +142,10 @@ spec:
           hostPath:
             path: /dev
             type: Directory
+        - name: host-sys
+          hostPath:
+            path: /sys
+        - name: etc-selinux
+          hostPath:
+            path: /etc/selinux
+            type: DirectoryOrCreate

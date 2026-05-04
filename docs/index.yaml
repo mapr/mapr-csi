@@ -2,6 +2,29 @@ apiVersion: v1
 entries:
   hpe-ezmeral-csi-driver:
   - apiVersion: v1
+    appVersion: 1.2.16
+    created: "2026-04-28T21:50:26.794877069-07:00"
+    description: A Helm chart for installing the HPE Ezmeral Data Fabric CSI Driver
+      (FUSE) for Kubernetes
+    digest: eec556e10acafea639722d738c5e7753483b9a22e9169c5bd471e02a7c239be4
+    home: https://www.hpe.com/us/en/software/data-fabric.html
+    icon: https://raw.githubusercontent.com/mapr/mapr-csi/master/docs/assets/hpe_ezmeral.png
+    keywords:
+    - HPE
+    - EzmeralDataFabric
+    - FileSystemVolume
+    - BlockVolume
+    - Fuse
+    maintainers:
+    - email: ezmeral-csi-support@hpe.com
+      name: HPE Ezmeral Data Fabric
+    name: hpe-ezmeral-csi-driver
+    sources:
+    - https://docs.datafabric.hpe.com/home/CSIdriver/csi_overview.html
+    urls:
+    - hpe-ezmeral-csi-driver-1.2.16.tgz
+    version: 1.2.16
+  - apiVersion: v1
     appVersion: 1.2.15
     created: "2025-11-26T22:48:18.207661474-08:00"
     description: A Helm chart for installing the HPE Ezmeral Data Fabric CSI Driver
@@ -371,6 +394,29 @@ entries:
     version: 1.2.0
   hpe-ezmeral-nfs-csi-driver:
   - apiVersion: v1
+    appVersion: 1.0.16
+    created: "2026-04-28T21:50:28.01226092-07:00"
+    description: A Helm chart for installing the HPE Ezmeral Data Fabric CSI Driver
+      (NFS) for Kubernetes
+    digest: b2f87cc341b4d548fef6e38ddc07ac206319c09a7e6482beb24efd8eeb1bcacf
+    home: https://www.hpe.com/us/en/software/data-fabric.html
+    icon: https://raw.githubusercontent.com/mapr/mapr-csi/master/docs/assets/hpe_ezmeral.png
+    keywords:
+    - HPE
+    - EzmeralDataFabric
+    - FileSystemVolume
+    - BlockVolume
+    - LoopbackNFS
+    maintainers:
+    - email: ezmeral-csi-support@hpe.com
+      name: HPE Ezmeral Data Fabric
+    name: hpe-ezmeral-nfs-csi-driver
+    sources:
+    - https://docs.datafabric.hpe.com/home/CSIdriver/csi_overview.html
+    urls:
+    - hpe-ezmeral-nfs-csi-driver-1.0.16.tgz
+    version: 1.0.16
+  - apiVersion: v1
     appVersion: 1.0.15
     created: "2025-11-26T22:48:20.469044322-08:00"
     description: A Helm chart for installing the HPE Ezmeral Data Fabric CSI Driver
@@ -738,4 +784,4 @@ entries:
     urls:
     - hpe-ezmeral-nfs-csi-driver-1.0.0.tgz
     version: 1.0.0
-generated: "2025-11-26T22:48:20.468288297-08:00"
+generated: "2026-04-28T21:50:28.011541679-07:00"
